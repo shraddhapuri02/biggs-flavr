@@ -11,23 +11,6 @@ if not api_key:
     st.info("Get a free key at aistudio.google.com")
     st.stop()
 
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash",
-    system_instruction="""You are a food innovation consultant for Biggs Food Corporation,
-a Filipino casual dining brand. Generate ONE new product idea based on customer reviews
-and food trend data in this exact format:
-
-PRODUCT NAME: [Creative Filipino-inspired name]
-DESCRIPTION: [1-2 sentences about the dish]
-KEY INGREDIENTS: [4-6 core ingredients]
-TARGET MARKET: [Who it's for, age range, occasion]
-POSITIONING: [One sentence brand statement]
-ESTIMATED PRICE: [Price in PHP]
-
-Always use authentic Filipino flavors. Be specific and feasible for a casual dining chain."""
-)
-
 st.subheader("Enter Your Data")
 
 customer_review = st.text_area(
@@ -47,6 +30,25 @@ if st.button("Generate Product Idea", type="primary", use_container_width=True):
         st.error("Please fill in both fields before generating.")
     else:
         with st.spinner("Generating idea with Gemini..."):
+
+            genai.configure(api_key=api_key)
+
+            model = genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                system_instruction="""You are a food innovation consultant for Biggs Food Corporation,
+a Filipino casual dining brand. Generate ONE new product idea based on customer reviews
+and food trend data in this exact format:
+
+PRODUCT NAME: [Creative Filipino-inspired name]
+DESCRIPTION: [1-2 sentences about the dish]
+KEY INGREDIENTS: [4-6 core ingredients]
+TARGET MARKET: [Who it's for, age range, occasion]
+POSITIONING: [One sentence brand statement]
+ESTIMATED PRICE: [Price in PHP]
+
+Always use authentic Filipino flavors. Be specific and feasible for a casual dining chain."""
+            )
+
             prompt = f"""CUSTOMER REVIEW:
 {customer_review}
 
@@ -54,6 +56,7 @@ FOOD TREND:
 {food_trend}
 
 Generate a new Biggs product idea based on the above."""
+
             response = model.generate_content(prompt)
             result = response.text
 
@@ -70,4 +73,4 @@ Generate a new Biggs product idea based on the above."""
         )
 
 st.divider()
-st.caption("FLAVR — Biggs Food Innovation Engine | Powered by Gemini 1.5 Flash")
+st.caption("FLAVR — Biggs Food Innovation Engine | Powered by Gemini 2.0 Flash")
