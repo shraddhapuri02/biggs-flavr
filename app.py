@@ -39,8 +39,8 @@ st.divider()
 generate_btn = st.button("🚀 Generate Product Idea", type="primary", use_container_width=True)
 
 if generate_btn:
-    if not customer_review.strip() or not food_trend.strip():
-        st.error("⚠️ Please fill in both fields before generating.")
+    if not customer_review.strip() and not food_trend.strip():
+        st.error("⚠️ Please fill in at least one field before generating.")
     else:
         with st.spinner("✨ Generating your product idea..."):
             try:
@@ -71,10 +71,10 @@ Rules you must follow:
                             "content": f"""Generate a new Biggs product idea based on these inputs:
 
 CUSTOMER REVIEW:
-{customer_review}
+{customer_review if customer_review.strip() else "No customer review provided, use general Filipino food preferences."}
 
 FOOD TREND:
-{food_trend}
+{food_trend if food_trend.strip() else "No food trend provided, use current popular Filipino food trends."}
 
 Remember to fill in ALL 6 fields: PRODUCT NAME, DESCRIPTION, KEY INGREDIENTS, TARGET MARKET, POSITIONING, and ESTIMATED PRICE."""
                         }
