@@ -6,7 +6,10 @@ st.title("🍽️ FLAVR — Biggs Food Innovation Engine")
 st.markdown("Paste customer reviews and food trends to generate new product ideas for **Biggs Food Corporation**.")
 st.divider()
 
-api_key = st.secrets["GEMINI_API_KEY"]
+api_key = st.text_input("Paste your Gemini API key:", type="password")
+if not api_key:
+    st.info("Get a free key at aistudio.google.com")
+    st.stop()
 
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel(
