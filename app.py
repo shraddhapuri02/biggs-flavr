@@ -30,10 +30,10 @@ if st.button("Generate Product Idea", type="primary", use_container_width=True):
         st.error("Please fill in both fields before generating.")
     else:
         with st.spinner("Generating idea..."):
+            try:
+                client = genai.Client(api_key=api_key)
 
-            client = genai.Client(api_key=api_key)
-
-            prompt = f"""You are a food innovation consultant for Biggs Food Corporation,
+                prompt = f"""You are a food innovation consultant for Biggs Food Corporation,
 a Filipino casual dining brand. Generate ONE new product idea based on the inputs below.
 
 Use this exact format:
@@ -52,25 +52,28 @@ CUSTOMER REVIEW:
 FOOD TREND:
 {food_trend}
 
-Generate a new Biggs product idea based on the above."""
+Generate a new Biggs product idea."""
 
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt
-            )
-            result = response.text
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt
+                )
+                result = response.text
 
-        st.divider()
-        st.subheader("💡 Generated Product Idea")
-        st.success(result)
+                st.divider()
+                st.subheader("💡 Generated Product Idea")
+                st.success(result)
 
-        st.download_button(
-            label="Download This Idea",
-            data=result,
-            file_name="biggs_idea.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
+                st.download_button(
+                    label="Download This Idea",
+                    data=result,
+                    file_name="biggs_idea.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+
+            except Exception as e:
+                st.error(f"Something went wrong: {str(e)}")
 
 st.divider()
 st.caption("FLAVR — Biggs Food Innovation Engine | Powered by Gemini 2.0 Flash")
