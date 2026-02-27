@@ -6,7 +6,7 @@ st.title("🍽️ FLAVR — Biggs Food Innovation Engine")
 st.markdown("Paste customer reviews and food trends to generate new product ideas for **Biggs Food Corporation**.")
 st.divider()
 
-api_key = st.text_input("Paste your Gemini API key:", type="password")
+api_key = st.text_input("AIzaSyAc5ZoG-cwpN_3003_J40FbOLwy-Zs461c", type="password")
 if not api_key:
     st.info("Get a free key at aistudio.google.com")
     st.stop()
