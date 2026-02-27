@@ -32,7 +32,7 @@ if st.button("Generate Product Idea", type="primary", use_container_width=True):
         with st.spinner("Generating idea..."):
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
 
                 prompt = f"""You are a food innovation consultant for Biggs Food Corporation,
 a Filipino casual dining brand. Generate ONE new product idea based on the inputs below.
