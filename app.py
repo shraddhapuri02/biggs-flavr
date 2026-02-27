@@ -49,94 +49,89 @@ if generate_btn:
                     messages=[
                         {
                             "role": "system",
-                            "content": """You are a food innovation consultant for Biggs Food Corporation,
-a Filipino casual dining brand. Generate ONE new product idea based on customer reviews
-and food trend data in this exact format:
+                            "content": """You are a food innovation consultant for Biggs Food Corporation, a Filipino casual dining brand.
 
-PRODUCT NAME: [Creative Filipino-inspired name]
-DESCRIPTION: [1-2 sentences about the dish]
-KEY INGREDIENTS: [4-6 core ingredients]
-TARGET MARKET: [Who it's for, age range, occasion]
-POSITIONING: [One sentence brand statement]
-ESTIMATED PRICE: [Price in PHP]
+You MUST ALWAYS respond using EXACTLY this format with ALL 6 fields filled in. Never skip any field. Never add extra commentary before or after.
 
-Always use authentic Filipino flavors. Be specific and feasible for a casual dining chain."""
+PRODUCT NAME: [Creative Filipino-inspired dish name]
+DESCRIPTION: [Exactly 2 sentences describing the dish, how it is cooked, and what makes it special]
+KEY INGREDIENTS: [Exactly 5 ingredients separated by commas]
+TARGET MARKET: [Specific age range, who they are, and what occasion this suits]
+POSITIONING: [One punchy sentence about the brand positioning]
+ESTIMATED PRICE: [A specific price in Philippine Peso, e.g. PHP 189]
+
+Rules you must follow:
+- You MUST fill in every single field, no exceptions
+- Always use authentic Filipino flavors and cooking methods
+- Keep it realistic and feasible for a casual dining chain
+- Be specific, never use placeholder text or brackets in your answer"""
                         },
                         {
                             "role": "user",
-                            "content": f"""CUSTOMER REVIEW:
+                            "content": f"""Generate a new Biggs product idea based on these inputs:
+
+CUSTOMER REVIEW:
 {customer_review}
 
 FOOD TREND:
 {food_trend}
 
-Generate a new Biggs product idea based on the above."""
+Remember to fill in ALL 6 fields: PRODUCT NAME, DESCRIPTION, KEY INGREDIENTS, TARGET MARKET, POSITIONING, and ESTIMATED PRICE."""
                         }
                     ]
                 )
 
                 result = response.choices[0].message.content
 
-                # Parse and display result nicely
+                # Parse result into a dictionary
+                fields = {
+                    "PRODUCT NAME": {"icon": "🍴", "color": "#C0392B", "text_color": "white", "is_title": True},
+                    "DESCRIPTION": {"icon": "📝", "color": "#f9f9f9", "text_color": "#222"},
+                    "KEY INGREDIENTS": {"icon": "🛒", "color": "#f9f9f9", "text_color": "#222"},
+                    "TARGET MARKET": {"icon": "🎯", "color": "#f9f9f9", "text_color": "#222"},
+                    "POSITIONING": {"icon": "📣", "color": "#f9f9f9", "text_color": "#222"},
+                    "ESTIMATED PRICE": {"icon": "💰", "color": "#FEF9E7", "text_color": "#C0392B"},
+                }
+
+                parsed = {}
+                lines = result.strip().split("\n")
+                current_key = None
+                for line in lines:
+                    if ":" in line:
+                        for field in fields:
+                            if line.upper().startswith(field):
+                                current_key = field
+                                parsed[field] = line.partition(":")[2].strip()
+                                break
+                    elif current_key and line.strip():
+                        parsed[current_key] += " " + line.strip()
+
                 st.divider()
                 st.subheader("💡 Generated Product Idea")
 
-                # Display each field in its own styled card
-                lines = result.strip().split("\n")
-                for line in lines:
-                    if line.strip() == "":
-                        continue
-                    if ":" in line:
-                        label, _, value = line.partition(":")
-                        label = label.strip()
-                        value = value.strip()
+                for field, style in fields.items():
+                    value = parsed.get(field, "Not provided")
 
-                        if "PRODUCT NAME" in label:
-                            st.markdown(f"""
-                                <div style='background-color:#C0392B; padding:15px; border-radius:10px; margin-bottom:10px'>
-                                    <h2 style='color:white; margin:0'>🍴 {value}</h2>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-                        elif "DESCRIPTION" in label:
-                            st.markdown(f"""
-                                <div style='background-color:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid #C0392B'>
-                                    <p style='color:#555; margin:0; font-size:13px'><b>📝 DESCRIPTION</b></p>
-                                    <p style='margin:5px 0 0 0'>{value}</p>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-                        elif "KEY INGREDIENTS" in label:
-                            st.markdown(f"""
-                                <div style='background-color:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid #C0392B'>
-                                    <p style='color:#555; margin:0; font-size:13px'><b>🛒 KEY INGREDIENTS</b></p>
-                                    <p style='margin:5px 0 0 0'>{value}</p>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-                        elif "TARGET MARKET" in label:
-                            st.markdown(f"""
-                                <div style='background-color:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid #C0392B'>
-                                    <p style='color:#555; margin:0; font-size:13px'><b>🎯 TARGET MARKET</b></p>
-                                    <p style='margin:5px 0 0 0'>{value}</p>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-                        elif "POSITIONING" in label:
-                            st.markdown(f"""
-                                <div style='background-color:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid #C0392B'>
-                                    <p style='color:#555; margin:0; font-size:13px'><b>📣 POSITIONING</b></p>
-                                    <p style='margin:5px 0 0 0'>{value}</p>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-                        elif "ESTIMATED PRICE" in label or "PRICE" in label:
-                            st.markdown(f"""
-                                <div style='background-color:#FEF9E7; padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid #F39C12'>
-                                    <p style='color:#555; margin:0; font-size:13px'><b>💰 ESTIMATED PRICE</b></p>
-                                    <p style='margin:5px 0 0 0; font-size:20px; font-weight:bold; color:#C0392B'>{value}</p>
-                                </div>
-                            """, unsafe_allow_html=True)
+                    if style.get("is_title"):
+                        st.markdown(f"""
+                            <div style='background-color:{style["color"]}; padding:18px; border-radius:10px; margin-bottom:10px'>
+                                <h2 style='color:{style["text_color"]}; margin:0'>{style["icon"]} {value}</h2>
+                            </div>
+                        """, unsafe_allow_html=True)
+                    elif field == "ESTIMATED PRICE":
+                        st.markdown(f"""
+                            <div style='background-color:{style["color"]}; padding:15px; border-radius:10px; margin-bottom:10px; border-left:4px solid #F39C12'>
+                                <p style='color:#555; margin:0; font-size:12px'><b>{style["icon"]} {field}</b></p>
+                                <p style='margin:5px 0 0 0; font-size:24px; font-weight:bold; color:{style["text_color"]}'>{value}</p>
+                            </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"""
+                            <div style='background-color:{style["color"]}; padding:15px; border-radius:10px; margin-bottom:10px; border-left:4px solid #C0392B'>
+                                <p style='color:#555; margin:0; font-size:12px'><b>{style["icon"]} {field}</b></p>
+                                <p style='margin:5px 0 0 0; color:{style["text_color"]}'>{value}</p>
+                            </div>
+                        """, unsafe_allow_html=True)
 
                 st.divider()
                 st.download_button(
