@@ -6,10 +6,7 @@ st.title("🍽️ FLAVR — Biggs Food Innovation Engine")
 st.markdown("Paste customer reviews and food trends to generate new product ideas for **Biggs Food Corporation**.")
 st.divider()
 
-api_key = st.text_input("AIzaSyAc5ZoG-cwpN_3003_J40FbOLwy-Zs461c", type="password")
-if not api_key:
-    st.info("Get a free key at aistudio.google.com")
-    st.stop()
+api_key = st.secrets["GEMINI_API_KEY"]
 
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel(
@@ -28,21 +25,21 @@ ESTIMATED PRICE: [Price in PHP]
 Always use authentic Filipino flavors. Be specific and feasible for a casual dining chain."""
 )
 
-st.subheader("📥 Enter Your Data")
+st.subheader("Enter Your Data")
 
 customer_review = st.text_area(
     "Customer Reviews",
-    placeholder="Paste customer reviews here... e.g. I love Biggs lechon but wish there was a lighter wrap version!",
+    placeholder="Paste customer reviews here...",
     height=150
 )
 
 food_trend = st.text_area(
     "Food Trend / Blog Excerpt",
-    placeholder="Paste a food trend article here... e.g. Filipino street food is going global with handheld formats trending on TikTok.",
+    placeholder="Paste a food trend article here...",
     height=150
 )
 
-if st.button("🚀 Generate Product Idea", type="primary", use_container_width=True):
+if st.button("Generate Product Idea", type="primary", use_container_width=True):
     if not customer_review.strip() or not food_trend.strip():
         st.error("Please fill in both fields before generating.")
     else:
@@ -58,12 +55,11 @@ Generate a new Biggs product idea based on the above."""
             result = response.text
 
         st.divider()
-        st.subheader("💡 Generated Product Idea")
+        st.subheader("Generated Product Idea")
         st.success(result)
 
-        st.divider()
         st.download_button(
-            label="⬇️ Download This Idea",
+            label="Download This Idea",
             data=result,
             file_name="biggs_idea.txt",
             mime="text/plain",
@@ -72,27 +68,3 @@ Generate a new Biggs product idea based on the above."""
 
 st.divider()
 st.caption("FLAVR — Biggs Food Innovation Engine | Powered by Gemini 1.5 Flash")
-```
-
-4. Click the green **Commit changes** button → **Commit changes** again
-
----
-
-**STEP 5 — Deploy on Streamlit**
-
-1. Go to **[share.streamlit.io](https://share.streamlit.io)**
-2. Click **Sign in with GitHub** → authorize it
-3. Click **Create app**
-4. Fill in:
-   - Repository: `biggs-flavr`
-   - Branch: `main`
-   - Main file path: `app.py`
-5. Click **Deploy** — wait about 2 minutes
-
----
-
-**STEP 6 — Get your live link**
-
-Once deployed you'll see your app live at a link like:
-```
-https://yourname-biggs-flavr.streamlit.app
