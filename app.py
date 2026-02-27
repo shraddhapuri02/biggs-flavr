@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(page_title="FLAVR - Biggs Food Innovation", page_icon="🍽️")
 st.title("🍽️ FLAVR — Biggs Food Innovation Engine")
@@ -29,16 +29,14 @@ if st.button("Generate Product Idea", type="primary", use_container_width=True):
     if not customer_review.strip() or not food_trend.strip():
         st.error("Please fill in both fields before generating.")
     else:
-        with st.spinner("Generating idea with Gemini..."):
+        with st.spinner("Generating idea..."):
 
-            genai.configure(api_key=api_key)
+            client = genai.Client(api_key=api_key)
 
-            model = genai.GenerativeModel(
-                model_name="gemini-pro",
-                system_instruction="""You are a food innovation consultant for Biggs Food Corporation,
-a Filipino casual dining brand. Generate ONE new product idea based on customer reviews
-and food trend data in this exact format:
+            prompt = f"""You are a food innovation consultant for Biggs Food Corporation,
+a Filipino casual dining brand. Generate ONE new product idea based on the inputs below.
 
+Use this exact format:
 PRODUCT NAME: [Creative Filipino-inspired name]
 DESCRIPTION: [1-2 sentences about the dish]
 KEY INGREDIENTS: [4-6 core ingredients]
@@ -46,10 +44,9 @@ TARGET MARKET: [Who it's for, age range, occasion]
 POSITIONING: [One sentence brand statement]
 ESTIMATED PRICE: [Price in PHP]
 
-Always use authentic Filipino flavors. Be specific and feasible for a casual dining chain."""
-            )
+Always use authentic Filipino flavors. Be specific and feasible for a casual dining chain.
 
-            prompt = f"""CUSTOMER REVIEW:
+CUSTOMER REVIEW:
 {customer_review}
 
 FOOD TREND:
@@ -57,11 +54,14 @@ FOOD TREND:
 
 Generate a new Biggs product idea based on the above."""
 
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
             result = response.text
 
         st.divider()
-        st.subheader("Generated Product Idea")
+        st.subheader("💡 Generated Product Idea")
         st.success(result)
 
         st.download_button(
