@@ -10,7 +10,7 @@ api_key = st.secrets["GEMINI_API_KEY"]
 
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+    model_name="gemini-2.0-flash",
     system_instruction="""You are a food innovation consultant for Biggs Food Corporation,
 a Filipino casual dining brand. Generate ONE new product idea based on customer reviews
 and food trend data in this exact format:
