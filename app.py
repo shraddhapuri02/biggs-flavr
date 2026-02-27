@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(page_title="FLAVR - Biggs Food Innovation", page_icon="🍽️")
 st.title("🍽️ FLAVR — Biggs Food Innovation Engine")
@@ -31,8 +31,7 @@ if st.button("Generate Product Idea", type="primary", use_container_width=True):
     else:
         with st.spinner("Generating idea..."):
             try:
-                genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
+                client = genai.Client(api_key=api_key)
 
                 prompt = f"""You are a food innovation consultant for Biggs Food Corporation,
 a Filipino casual dining brand. Generate ONE new product idea based on the inputs below.
@@ -55,7 +54,10 @@ FOOD TREND:
 
 Generate a new Biggs product idea."""
 
-                response = model.generate_content(prompt)
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt
+                )
                 result = response.text
 
                 st.divider()
@@ -74,4 +76,4 @@ Generate a new Biggs product idea."""
                 st.error(f"Something went wrong: {str(e)}")
 
 st.divider()
-st.caption("FLAVR — Biggs Food Innovation Engine | Powered by Gemini 1.5 Flash")
+st.caption("FLAVR — Biggs Food Innovation Engine | Powered by Gemini 2.0 Flash")
