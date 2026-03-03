@@ -108,15 +108,17 @@ Rules you must follow:
                             },
                             {
                                 "role": "user",
-                                "content": f"""Generate {num_ideas} new Biggs product ideas based on these inputs:
+                                "content": f"""Generate {num_ideas} new Biggs product ideas based on these inputs.
 
-CUSTOMER REVIEW:
+IMPORTANT: You MUST combine BOTH inputs equally. The product idea should satisfy the customer review AND reflect the food trend at the same time. For example if the review asks for vegetarian food and the trend is about pork, create a vegetarian pork alternative like tofu lechon or jackfruit sisig. Do not ignore either input.
+
+CUSTOMER REVIEW (what the customer wants):
 {customer_review if customer_review.strip() else "No customer review provided, use general Filipino food preferences."}
 
-FOOD TREND:
+FOOD TREND (what is currently trending):
 {food_trend if food_trend.strip() else "No food trend provided, use current popular Filipino food trends."}
 
-Remember to generate exactly {num_ideas} ideas, each with ALL 6 fields filled in, separated by ---"""
+Remember to generate exactly {num_ideas} ideas, each combining BOTH inputs, with ALL 6 fields filled in, separated by ---"""
                             }
                         ]
                     )
